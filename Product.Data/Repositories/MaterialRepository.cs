@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Product.Data.Context;
 using Product.Data.Entities;
+using System.Data.Entity;
+
 
 namespace Product.Data.Repositories
 {
@@ -16,7 +18,7 @@ namespace Product.Data.Repositories
 
         public Material GetById(Int32 id)
         {
-            return _context.Materials.FirstOrDefault(x => x.MaterialId == id);
+            return _context.Materials.Include(x => x.ProductMaterials).FirstOrDefault(x => x.MaterialId == id);
         }
 
         public IList<Material> GetAll()
@@ -26,7 +28,7 @@ namespace Product.Data.Repositories
 
         public void Update(Int32 id, String name, Decimal cost)
         {
-            var entity = _context.Materials.First(x => x.MaterialId == id);
+            var entity = _context.Materials.Include(x => x.ProductMaterials).First(x => x.MaterialId == id);
             entity.Name = name;
             entity.Cost = cost;
         }
@@ -35,6 +37,15 @@ namespace Product.Data.Repositories
         {
             var entity = _context.Materials.First(x => x.MaterialId == id);
             _context.Materials.Remove(entity);
+            _context.SaveChanges();
+
+        }
+
+        public void UpdateAssociated(Int32 id, ICollection<ProductMaterial> productMaterials)
+        {            
+            _context.ProductMaterials.Where(x => x.MaterialId == id).ToList().ForEach(x => x.MaterialId = productMaterials.First().MaterialId);
+            _context.SaveChanges();
+
         }
     }
 }

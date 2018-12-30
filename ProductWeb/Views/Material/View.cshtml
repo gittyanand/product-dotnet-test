@@ -13,6 +13,7 @@
     Cost: $@Model.Cost
 </div>
 <p>
-    <button class="btn btn-warning">Merge</button>
+    @*<button class="btn btn-warning">Merge</button>*@
+    @Html.ActionLink("Merge", "Merge", new { id = Model.MaterialId }, new { @class = "btn btn-warning" })
     Please implement a Merge functionality from here.
 </p>
